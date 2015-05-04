@@ -1,12 +1,11 @@
 (ns minesweeper.core
   (:use [minesweeper.game]
+        [minesweeper.pprint]
         [clojure.pprint])
   (:gen-class))
 
 
-(init-game 10 10 25)
-
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Initialize board and print it."
   [& args]
-  (println "Hello, World!"))
+  (print-board (init-game 10 10 25)))
