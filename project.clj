@@ -1,8 +1,8 @@
 (defproject minesweeper "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :description "Minesweeper game for learning purposes"
+  :url "https://github.com/u6f6o/minesweeper"
+  :license {:name "The MIT License (MIT)"
+            :url "http://opensource.org/licenses/MIT"}
   :dependencies [[org.clojure/clojure "1.6.0"]]
   :main ^:skip-aot minesweeper.core
   :target-path "target/%s"
