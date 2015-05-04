@@ -12,7 +12,7 @@
   ([board pred]
    (let [w (count board)
          h (count (first board))]
-     (for [x (range w) y (range h) :when (pred board x y)]
+     (for [x (range w) y (range h) :when (pred (get-in board [x y]))]
        [x y]))))
 
 (defn board->coords
@@ -23,7 +23,7 @@
 (defn mines->coords
   "Coordinates of the mines on the board"
   [board]
-  (to-coords board #(get-in %1 [%2 %3 :mine])))
+  (to-coords board #(:mine %)))
 
 (defn- place-mines
   "Place n mines randomly on the board"
