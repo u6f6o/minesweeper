@@ -5,8 +5,7 @@
   [cell]
   (if (:mine cell)
     (symbol "X")
-    (if (:warn cell)
-      (:warn cell)
+    (or (:warn cell)
       0 )))
 
 (defn print-board
@@ -14,7 +13,7 @@
   (pprint
    (map
     (fn [row]
-      (map #(cell-desc %) row))
+      (map cell-desc row))
     board)))
 
 

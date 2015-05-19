@@ -23,7 +23,7 @@
 (defn mines->coords
   "Coordinates of the mines on the board"
   [board]
-  (to-coords board #(:mine %)))
+  (to-coords board :mine))
 
 (defn- place-mines
   "Place n mines randomly on the board"
