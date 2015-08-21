@@ -2,7 +2,7 @@
   (:use [clojure.pprint]))
 
 
-(defn- empty-board
+(defn empty-board
   "Create a rectangular empty board of the specified with and height"
   [w h]
   (vec (repeat w (vec (repeat h nil)))))
@@ -24,12 +24,6 @@
   (to-coords board))
 
 
-(defn mines->coords
-  "Coordinates of the mines on the board"
-  [board]
-  (to-coords board :mine))
-
-
 (defn neighbours
   "Locate neighbour cells based on coordinates [x y],
   respecting board width and height"
@@ -42,6 +36,14 @@
                      (> w dx -1)
                      (> h dy -1))]
       [dx dy])))
+
+
+(defn count-nearby-mines [board]
+  "Count the number of nearby mines"
+  (let [mines (to-coords board :mine)
+        warnings (mapcat (partial neighbours board) mines)]
+    (frequencies
+     (remove (set mines) warnings))))
 
 
 (defn place-mines
@@ -58,15 +60,12 @@
 (defn place-warnings
   "Place warnings on a mines' neighbour cells"
   [board]
-  (let [ws (->> board
-                mines->coords
-                (mapcat (partial neighbours board))
-                (remove #(get-in board (conj % :mine))))]
-    (reduce
-     (fn [board coordinates]
-       (update-in board (conj coordinates :warn) (fnil inc 0)))
+  (let [mine-counts (count-nearby-mines board)]
+    (reduce-kv
+     (fn [m k v]
+       (assoc-in m k {:warn v}))
      board
-     ws)))
+     mine-counts)))
 
 
 (defn init-game
