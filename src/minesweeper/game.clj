@@ -3,12 +3,14 @@
 
 
 (defn empty-board
-  "Create a rectangular empty board of the specified with and height"
+  "Create a rectangular empty board of
+  the specified with and height"
   [w h]
   (vec (repeat w (vec (repeat h nil)))))
 
 
 (defn to-coords
+  "Transform the board cells into coordinates"
   ([board]
    (to-coords board (constantly true)))
   ([board pred]
@@ -18,13 +20,7 @@
        [x y]))))
 
 
-(defn board->coords
-  "Coordinates of the board"
-  [board]
-  (to-coords board))
-
-
-(defn neighbours
+(defn neighbour-cells
   "Locate neighbour cells based on coordinates [x y],
   respecting board width and height"
   [board [x y]]
@@ -38,21 +34,29 @@
       [dx dy])))
 
 
-(defn count-nearby-mines [board]
+(defn warnings-freq [board]
   "Count the number of nearby mines"
   (let [mines (to-coords board :mine)
-        warnings (mapcat (partial neighbours board) mines)]
+        warnings (mapcat (partial neighbour-cells board) mines)]
     (frequencies
      (remove (set mines) warnings))))
 
 
+(defn random-mines
+  [board start-pos]
+  (-> (set (to-coords board))
+      (disj start-pos)
+      (shuffle)))
+
+
 (defn place-mines
   "Place n mines randomly on the board"
-  [board n]
-  (let [mines (take n (shuffle (to-coords board)))]
+  [board mine-count start-pos]
+  (let [mines (take mine-count
+                    (random-mines board start-pos))]
     (reduce
-     (fn [board coordinates]
-       (assoc-in board coordinates {:mine true}))
+     (fn [m k]
+       (assoc-in m k {:mine true}))
      board
      mines)))
 
@@ -60,7 +64,7 @@
 (defn place-warnings
   "Place warnings on a mines' neighbour cells"
   [board]
-  (let [mine-counts (count-nearby-mines board)]
+  (let [mine-counts (warnings-freq board)]
     (reduce-kv
      (fn [m k v]
        (assoc-in m k {:warn v}))
@@ -68,11 +72,18 @@
      mine-counts)))
 
 
+(defn clear-field
+  "Clear single field on the board"
+  [board coords]
+  (assoc-in board coords {:flag true}))
+
+
 (defn init-game
   "Create board and place mines and warnings"
-  [width height mine-count]
-  (-> (empty-board width height)
-      (place-mines mine-count)
+  [w h mine-count start-pos]
+  (-> (empty-board w h)
+      (clear-field start-pos)
+      (place-mines mine-count start-pos)
       (place-warnings)))
 
 
