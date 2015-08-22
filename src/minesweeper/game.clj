@@ -2,7 +2,7 @@
   (:use [clojure.pprint]))
 
 
-(defn empty-board
+(defn init-board
   "Create a rectangular empty board of
   the specified with and height"
   [w h]
@@ -49,7 +49,7 @@
       (shuffle)))
 
 
-(defn place-mines
+(defn init-mines
   "Place n mines randomly on the board"
   [board mine-count start-pos]
   (let [mines (take mine-count
@@ -61,7 +61,7 @@
      mines)))
 
 
-(defn place-warnings
+(defn init-warnings
   "Place warnings on a mines' neighbour cells"
   [board]
   (let [mine-counts (warnings-freq board)]
@@ -75,26 +75,28 @@
 (defn clear-field
   "Clear single field on the board"
   [board coords]
-  (assoc-in board coords {:flag true}))
+  (update-in board coords conj {:flag true}))
 
 
 (defn init-game
   "Create board and place mines and warnings"
   [w h mine-count start-pos]
-  (-> (empty-board w h)
+  (-> (init-board w h)
       (clear-field start-pos)
-      (place-mines mine-count start-pos)
-      (place-warnings)))
+      (init-mines mine-count start-pos)
+      (init-warnings)))
 
 
-(defn mine-triggered?
+(defn game-lost?
+  "Any mine exploded?"
   [board]
   (letfn [(pred [m] (every? (or m {}) [:mine :flag]))]
     (not-empty
       (to-coords board pred))))
 
 
-(defn board-cleared?
+(defn game-won?
+  "All fields cleared?"
   [board]
   (letfn [(pred [m] (not-any? (or m {}) [:mine :flag]))]
     (empty?
