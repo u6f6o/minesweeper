@@ -1,9 +1,11 @@
-(ns minesweeper.util
+(ns minesweeper.file
   "File control utility"
   (:require
     [clojure.java.io :as io]
     [clojure.string  :as str])
-  (:import [java.io File]))
+  (:import
+    [java.io File]
+    [java.net URL]))
 
 
 (defmulti basename
@@ -16,9 +18,17 @@
   (str/replace-first s #"\.[^.]+$" ""))
 
 
-(defn list-dir
+(defn res-as-file
+  [res]
+  (io/file (io/resource res)))
+
+
+(defmulti list-dir
+  class)
+(defmethod list-dir URL
   [resource]
-  (let [fs (->> "minesweeper/icons/"
-                io/resource
-                io/file
-                file-seq)]
+  (list-dir (res-as-file resource)))
+(defmethod list-dir File
+  [file]
+  (rest (file-seq file)))
+
