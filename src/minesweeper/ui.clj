@@ -31,6 +31,7 @@
 
 (defn choose-icon
   [field-attrs]
+  (println field-attrs)
   (cond
    (:mine field-attrs) (:mine icons)
    (:warn field-attrs) ((keyword (str (:warn field-attrs))) icons)
@@ -52,7 +53,8 @@
   []
   (let [coords (to-coords @board)]
     (doseq [pos coords]
-      (expose-field (first pos) (second pos)))))
+      (expose-field (first pos) (second pos)))
+    pack!))
 
 
 (defn examine-field
