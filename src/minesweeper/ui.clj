@@ -5,18 +5,26 @@
         [minesweeper core game file]))
 
 
-;; (def board (atom (init-game 5 5 10 [3 3])))
+(defn init-icons
+  []
+  (let [fs (list-dir (res-as-file "minesweeper/icons/"))]
+    (reduce
+     #(assoc %1 (keyword (basename %2)) (icon %2))
+     {}
+     fs)))
+
+(defn make-frame
+   []
+     (frame :title      "Minesweeper"
+            :width      250 ;;(* 24 w)
+            :height     250 ;;(* 24 h)
+            :on-close   :exit))
+
+(def root (make-frame))
+(def board (atom (init-game 5 5 10 [3 3])))
+(def icons (init-icons))
 
 
-;; (defn init-icons
-;;   []
-;;   (let [fs (list-dir (res-as-file "minesweeper/icons/"))]
-;;     (reduce
-;;      #(assoc %1 (keyword (basename %2)) (icon %2))
-;;      {}
-;;      fs)))
-
-;; (def icons (init-icons))
 
 ;; (defn make-buttons
 ;;   [w h]
@@ -114,13 +122,47 @@
 ;;              ["date:"     ] [(text (or "20.12.2012"     ""))]
 ;;              ["comment:"  ] [(text (or "Exzellenter Softwareentwickler!" ""))]]))
 
+(defn select-field
+  [row col]
+  (select root [(keyword (str "#field_" row "_" col))]))
+
+(defn choose-icon
+  [field-attrs]
+  (cond
+   (:mine field-attrs) (:mine icons)
+   (:flag field-attrs) ((keyword (str (or (:warn field-attrs) 0))) icons)
+   :else (:button icons)))
+
+(defn expose-field
+  [row col]
+  (let [field (select-field row col)
+        field-attrs (get-in @board [row col])]
+    (config! field :icon (choose-icon field-attrs))))
+
+(defn game-won
+  []
+  (println "YEAH"))
+
+(defn game-lost
+  []
+  (println "FUCK"))
+
+(defn examine-field
+  [row col]
+  (do
+    (println board)
+    (swap! board #(clear-field % [row col]))
+    (cond
+     (game-won? @board) (println "jgewoejgew")
+     (game-lost? @board) (println "kglwjelglw")
+     :else (expose-field row col))))
 
 
-(defn make-button [x y]
-    (button :id (format "cell_%d_%d" x y)
-            :icon (clojure.java.io/resource "minesweeper/icons/button.png")))
-;;             :listen [:action
-;;                     (fn [e] (click-button row col))]))
+(defn make-button [row col]
+    (button :id (str "field_" row "_" col)
+            :icon (:button icons)
+            :listen [:action
+                    (fn [e] (examine-field row col))]))
 
 (defn make-board
   [w h]
@@ -130,27 +172,15 @@
             (vector (make-button x y) "w 24px!, h 24px!"))))
 
 
+(config! root :content (make-board 5 5))
 
-
-
-
- (defn make-frame
-   []
-     (frame :title      "Minesweeper"
-            :width      250 ;;(* 24 w)
-            :height     500 ;;(* 24 h)
-            :on-close   :exit
-            :content    (make-board 5 5)))
-
-
-
-
- (defn foobar []
+(defn foobar []
    (native!)
-  (-> (make-frame)
-      show!))
+    (show! root))
 
-(foobar)
+(do
+  (println @board)
+  (foobar))
 
 
 

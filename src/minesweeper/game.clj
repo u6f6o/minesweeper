@@ -6,7 +6,7 @@
   "Create a rectangular empty board of
   the specified with and height"
   [w h]
-  (vec (repeat w (vec (repeat h nil)))))
+  (vec (repeat w (vec (repeat h {})))))
 
 
 (defn to-coords
@@ -56,7 +56,7 @@
                     (random-mines board start-pos))]
     (reduce
      (fn [m k]
-       (assoc-in m k {:mine true}))
+       (update-in m k conj {:mine true}))
      board
      mines)))
 
@@ -67,7 +67,7 @@
   (let [mine-counts (warnings-freq board)]
     (reduce-kv
      (fn [m k v]
-       (assoc-in m k {:warn v}))
+       (update-in m k conj {:warn v}))
      board
      mine-counts)))
 
@@ -90,18 +90,14 @@
 (defn game-lost?
   "Any mine exploded?"
   [board]
-  (letfn [(pred [m] (every? (or m {}) [:mine :flag]))]
-    (not-empty
-      (to-coords board pred))))
+  (letfn [(pred [m] (and (:mine m) (:flag m)))]
+    (> (count (to-coords board pred)) 0)))
 
 
 (defn game-won?
   "All fields cleared?"
   [board]
-  (letfn [(pred [m] (not-any? (or m {}) [:mine :flag]))]
-    (empty?
-     (to-coords board pred))))
-
-
-
+  (letfn [(pred [m] (or (:mine m) (:flag m)))]
+    (= (count (to-coords board pred))
+       (count (to-coords board)))))
 
