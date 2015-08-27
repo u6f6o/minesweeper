@@ -21,7 +21,7 @@
             :on-close   :exit))
 
 (def root (make-frame))
-(def board (atom (init-game 5 5 10 [3 3])))
+(def board (atom (init-game 16 16 40 [3 3])))
 (def icons (init-icons))
 
 
@@ -82,9 +82,9 @@
             (vector (make-button x y) "w 24px!, h 24px!"))))
 
 
-(config! root :content (make-board 5 5))
+(config! root :content (make-board 16 16))
 
-(defn -main 
+(defn -main
   []
   (native!)
   (show! root))
