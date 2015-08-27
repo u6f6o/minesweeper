@@ -2,7 +2,7 @@
   (:gen-class)
   (:require [clojure.java.io :as io])
   (:use [seesaw core mig]
-        [minesweeper core game file]))
+        [minesweeper game file]))
 
 
 (defn init-icons
@@ -84,15 +84,7 @@
 
 (config! root :content (make-board 5 5))
 
-(defn foobar []
-   (native!)
-    (show! root))
-
-(do
-  (println @board)
-  (foobar))
-
-
-
-
-
+(defn -main 
+  []
+  (native!)
+  (show! root))
