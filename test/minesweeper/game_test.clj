@@ -3,7 +3,7 @@
             [minesweeper.game :refer :all]))
 
 
-(deftest test-win-condition
+(deftest test-win-conditions
   (testing "All fields cleared"
     (let [board [[{:flag true} {:flag true} {:flag true}]
                  [{:flag true} {:mine true} {:flag true}]
@@ -20,6 +20,13 @@
                  [{} {}           {}]]]
       (is (not (game-won? board))))))
 
+
+ (deftest test-lose-conditions
+   (testing "Uncover mined field"
+     (let [board [[{} {}                       {}]
+                  [{} {:mine true, :flag true} {}]
+                  [{} {}                       {}]]]
+      (is (game-lost? board)))))
 
 
 
