@@ -113,8 +113,17 @@
 
           exp   [[{:warn 1   } {:warn 1   } {:warn 1   }]
                  [{:warn 1   } {:mine true} {:warn 1   }]
-                 [{:warn 1   } {:warn 1   } {:warn 1   }]]          ]
+                 [{:warn 1   } {:warn 1   } {:warn 1   }]]]
+      (is
+       (= exp (place-warnings board)))))
+  (testing "Empty board"
+    (let [board [[{          } {          } {          }]
+                 [{          } {          } {          }]
+                 [{          } {          } {          }]]
 
+          exp   [[{          } {          } {          }]
+                 [{          } {          } {          }]
+                 [{          } {          } {          }]]]
       (is
        (= exp (place-warnings board))))))
 
