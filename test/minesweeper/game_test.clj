@@ -18,6 +18,11 @@
     (let [board [[{} {}           {}]
                  [{} {:mine true} {}]
                  [{} {}           {}]]]
+      (is (not (game-won? board)))))
+  (testing "Empty board"
+    (let [board [[{} {} {}]
+                 [{} {} {}]
+                 [{} {} {}]]]
       (is (not (game-won? board))))))
 
 
@@ -36,6 +41,11 @@
     (let [board [[{} {}           {}]
                  [{} {:mine true} {}]
                  [{} {}           {}]]]
+      (is (not (game-lost? board)))))
+   (testing "Empty board"
+    (let [board [[{} {} {}]
+                 [{} {} {}]
+                 [{} {} {}]]]
       (is (not (game-lost? board))))))
 
 
