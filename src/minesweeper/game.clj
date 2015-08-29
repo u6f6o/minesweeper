@@ -100,19 +100,3 @@
   (letfn [(pred [m] (or (:mine m) (:flag m)))]
     (= (count (to-coords board pred))
        (count (to-coords board)))))
-
-
-(println (neighbour-cells (empty-board 10 10) [1 1]))
-(println (init-game 16 16 40 [3 3]))
-
-
-(let [board [[{:mine true} {} {} {} {}] [{} {:mine true} {} {} {}] [{} {} {} {} {}] [{} {} {} {} {}] [{} {} {} {} {}]]
-      mines (to-coords board :mine)
-      warnings (mapcat (partial neighbour-cells board) mines)]
-  (do
-    (println (str "mines: " (pr-str mines)))
-    (println (str "warns: " (pr-str warnings)))
-    (println (str "board" (place-warnings board)))))
-
-
-(println (place-warnings [[{} {:mine true} {} {} {:mine true}] [{} {:mine true} {} {} {}] [{} {} {} {:mine true} {}] [{} {} {} {:flag true} {}] [{} {} {} {:mine true} {}]]))

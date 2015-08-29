@@ -153,7 +153,3 @@
                  [5 1] 3}]
       (is
        (= exp (warnings-freq board))))))
-
-
-
-
