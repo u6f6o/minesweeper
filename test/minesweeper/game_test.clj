@@ -58,6 +58,24 @@
           exp-neighbours   [[0 0] [0 1] [0 2]
                             [1 0]       [1 2]
                             [2 0] [2 1] [2 2]]]
+      (is (= exp-neighbours (neighbour-cells board cell)))))
+  (testing "Get neighbour cells from border"
+    (let [cell             [1 0]
+          board            [[{} {} {}]
+                            [{} {} {}]
+                            [{} {} {}]]
+          exp-neighbours   [[0 0] [0 1]
+                                  [1 1]
+                            [2 0] [2 1]]]
+      (is (= exp-neighbours (neighbour-cells board cell)))))
+
+  (testing "Get neighbour cells from corner"
+    (let [cell             [0 0]
+          board            [[{} {} {}]
+                            [{} {} {}]
+                            [{} {} {}]]
+          exp-neighbours   [      [0 1]
+                            [1 0] [1 1]]]
       (is (= exp-neighbours (neighbour-cells board cell))))))
 
 
