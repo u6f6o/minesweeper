@@ -79,8 +79,23 @@
       (is (= neighbours (neighbour-cells board cell))))))
 
 
+(deftest test-place-warnings
+  (testing "Normal case"
+    (let [board [[{}           {}           {}           {}           {}          ]
+                 [{:mine true} {:mine true} {}           {}           {}          ]
+                 [{}           {}           {}           {}           {}          ]
+                 [{}           {}           {:mine true} {:mine true} {:mine true}]
+                 [{}           {}           {:mine true} {}           {:mine true}]
+                 [{:mine true} {}           {:mine true} {:mine true} {:mine true}]]
 
+          exp   [[{:warn 2   } {:warn 2   } {:warn 1   } {}           {}          ]
+                 [{:mine true} {:mine true} {:warn 1   } {}           {}          ]
+                 [{:warn 2   } {:warn 3   } {:warn 3   } {:warn 3   } {:warn 2   }]
+                 [{}           {:warn 2   } {:mine true} {:mine true} {:mine true}]
+                 [{:warn 1   } {:warn 4   } {:mine true} {:warn 8   } {:mine true}]
+                 [{:mine true} {:warn 3   } {:mine true} {:mine true} {:mine true}]]]
 
+      (is (= exp (place-warnings board))))))
 
 
 
