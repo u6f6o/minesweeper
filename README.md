@@ -1,4 +1,5 @@
 # minesweeper
+[![Build Status](https://travis-ci.org/u6f6o/minesweeper.svg?branch=master)](https://travis-ci.org/u6f6o/minesweeper)
 
 Minesweeper game for learning purposes
 
