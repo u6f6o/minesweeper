@@ -55,7 +55,7 @@
   (let [coords (to-coords @board)]
     (doseq [pos coords]
       (expose-field (first pos) (second pos)))
-    pack!))
+    pack! root))
 
 
 (defn examine-field
