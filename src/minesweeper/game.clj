@@ -91,7 +91,7 @@
   "Any mine exploded?"
   [board]
   (letfn [(pred [m] (and (:mine m) (:flag m)))]
-    (> (count (to-coords board pred)) 0)))
+    (pos? (count (to-coords board pred)))))
 
 
 (defn game-won?
