@@ -33,9 +33,10 @@
   [field-attrs]
   (println field-attrs)
   (cond
-   (:mine field-attrs) (:mine icons)
-   (:warn field-attrs) ((keyword (str (:warn field-attrs))) icons)
-   :else (:0 icons)))
+   (and (:mine field-attrs) (:flag field-attrs)) (:redmine icons)
+   (:mine field-attrs)                           (:mine icons)
+   (:warn field-attrs)                           ((keyword (str (:warn field-attrs))) icons)
+   :else                                         (:0 icons)))
 
 (defn expose-field
   [row col]
@@ -77,9 +78,11 @@
 (defn make-board
   [row col]
   (mig-panel
-   :constraints [(str "wrap" row) "[]" "[]" ]
+   :constraints [(str "gap 0, wrap" row) "[]" "[]" ]
    :items (for [x (range row) y (range col)]
             (vector (make-button x y) "w 24px!, h 24px!"))))
+
+
 
 
 (config! root :content (make-board 16 16))
