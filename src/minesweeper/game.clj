@@ -56,7 +56,7 @@
                     (random-mines board start-pos))]
     (reduce
      (fn [m k]
-       (update-in m k conj {:mine true}))
+       (assoc-in m k {:mine true}))
      board
      mines)))
 
@@ -67,7 +67,7 @@
   (let [mine-counts (warnings-freq board)]
     (reduce-kv
      (fn [m k v]
-       (update-in m k conj {:warn v}))
+       (assoc-in m k {:warn v}))
      board
      mine-counts)))
 
