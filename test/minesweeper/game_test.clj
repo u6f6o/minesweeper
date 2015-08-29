@@ -26,7 +26,12 @@
      (let [board [[{} {}                       {}]
                   [{} {:mine true, :flag true} {}]
                   [{} {}                       {}]]]
-      (is (game-lost? board)))))
+      (is (game-lost? board))))
+   (testing "All fields cleared"
+     (let [board [[{:flag true} {:flag true} {:flag true}]
+                  [{:flag true} {:mine true} {:flag true}]
+                  [{:flag true} {:flag true} {:flag true}]]]
+      (is (not (game-lost? board))))))
 
 
 
