@@ -7,6 +7,9 @@ Minesweeper game for learning purposes
 
     $ lein run
 
+## Icons 
+All icons in the game originate from https://github.com/HaikuArchives/Minesweeper. Thx for the great work!
+
 ## License
 
 Copyright © 2015 Ulf Gitschthaler
