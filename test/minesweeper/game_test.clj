@@ -8,8 +8,17 @@
     (let [board [[{:flag true} {:flag true} {:flag true}]
                  [{:flag true} {:mine true} {:flag true}]
                  [{:flag true} {:flag true} {:flag true}]]]
-      (is (game-won? board)))))
-
+      (is (game-won? board))))
+  (testing "Single covered field left"
+    (let [board [[{:flag true} {:flag true} {:flag true}]
+                 [{:flag true} {:mine true} {:flag true}]
+                 [{:flag true} {:flag true} {}]]]
+      (is (not (game-won? board)))))
+  (testing "No field uncovered"
+    (let [board [[{} {}           {}]
+                 [{} {:mine true} {}]
+                 [{} {}           {}]]]
+      (is (not (game-won? board))))))
 
 
 
