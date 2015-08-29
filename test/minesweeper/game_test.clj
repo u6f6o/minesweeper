@@ -26,27 +26,47 @@
       (is (not (game-won? board))))))
 
 
- (deftest test-lose-conditions
-   (testing "Uncover mined field"
-     (let [board [[{} {}                       {}]
-                  [{} {:mine true, :flag true} {}]
-                  [{} {}                       {}]]]
+(deftest test-lose-conditions
+  (testing "Uncover mined field"
+    (let [board [[{} {}                       {}]
+                 [{} {:mine true, :flag true} {}]
+                 [{} {}                       {}]]]
       (is (game-lost? board))))
-   (testing "All fields cleared"
-     (let [board [[{:flag true} {:flag true} {:flag true}]
-                  [{:flag true} {:mine true} {:flag true}]
-                  [{:flag true} {:flag true} {:flag true}]]]
+  (testing "All fields cleared"
+    (let [board [[{:flag true} {:flag true} {:flag true}]
+                 [{:flag true} {:mine true} {:flag true}]
+                 [{:flag true} {:flag true} {:flag true}]]]
       (is (not (game-lost? board)))))
-   (testing "No field uncovered"
+  (testing "No field uncovered"
     (let [board [[{} {}           {}]
                  [{} {:mine true} {}]
                  [{} {}           {}]]]
       (is (not (game-lost? board)))))
-   (testing "Empty board"
+  (testing "Empty board"
     (let [board [[{} {} {}]
                  [{} {} {}]
                  [{} {} {}]]]
       (is (not (game-lost? board))))))
+
+
+(deftest test-neighbour-cells
+  (testing "Get neighbour cells from center"
+    (let [cell             [1 1]
+          board            [[{} {} {}]
+                            [{} {} {}]
+                            [{} {} {}]]
+          exp-neighbours   [[0 0] [0 1] [0 2]
+                            [1 0]       [1 2]
+                            [2 0] [2 1] [2 2]]]
+      (is (= exp-neighbours (neighbour-cells board cell))))))
+
+
+
+
+
+
+
+
 
 
 
