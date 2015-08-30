@@ -5,21 +5,20 @@
         [minesweeper game icons]))
 
 
-(defn make-frame
-   []
-     (frame :title      "Minesweeper"
-            :width      250
-            :height     250
-            :on-close   :exit))
+(def game (atom (vector nil)))
+(def ui (frame :title "Minesweeper" :on-close :exit))
+(def started (atom false))
 
+(def levels { :beginner     { :rows 8,  :cols 8,  :mines 10 }
+              :intermediate { :rows 16, :cols 16, :mines 40 }
+              :expert       { :rows 16, :cols 30, :mines 99 }})
 
-(def root (make-frame))
-(def board (atom (init-game 16 16 40 [3 3])))
 
 
 (defn select-field
   [row col]
-  (select root [(keyword (str "#field_" row "_" col))]))
+  (select ui [(keyword (str "#field_" row "_" col))]))
+
 
 (defn choose-icon
   [field-attrs]
@@ -30,35 +29,41 @@
    (:warn field-attrs)                           (cell-icons (keyword (str (:warn field-attrs))))
    :else                                         (cell-icons :0)))
 
+
 (defn expose-field
   [row col]
   (let [field (select-field row col)
-        field-attrs (get-in @board [row col])]
+        field-attrs (get-in @game [row col])]
     (config! field :icon (choose-icon field-attrs))))
-
 
 
 (defn game-won
   []
   (println "YEAH"))
 
+
 (defn game-lost
   []
-  (let [coords (to-coords @board)]
+  (let [coords (to-coords @game)]
     (doseq [pos coords]
       (expose-field (first pos) (second pos)))
-    pack! root))
+    pack! ui))
 
 
 (defn examine-field
   [row col]
   (do
-    (println board)
-    (swap! board #(clear-field % [row col]))
+    (when (not @started)
+      (reset! game
+              (place-warnings
+               (place-mines @game 10 [row col])))
+      (reset! started true))
+    (swap! game #(clear-field % [row col]))
     (cond
-     (game-won? @board) (println "jgewoejgew")
-     (game-lost? @board) (game-lost)
+     (game-won? @game) (println "jgewoejgew")
+     (game-lost? @game) (game-lost)
      :else (expose-field row col))))
+
 
 
 (defn make-button [row col]
@@ -66,6 +71,7 @@
             :icon (cell-icons :button)
             :listen [:action
                     (fn [e] (examine-field row col))]))
+
 
 (defn make-board
   [row col]
@@ -75,11 +81,30 @@
             (vector (make-button x y) "w 24px!, h 24px!"))))
 
 
+(defn make-ui
+  [rows cols]
+  (do
+    (config! ui :content (make-board rows cols))
+    ))
 
 
-(config! root :content (make-board 16 16))
+(defn new-game
+  ([]
+   (new-game (:beginner levels)))
+  ([level]
+   (new-game (:rows level)
+             (:cols level)
+             (:mines level)))
+  ([rows cols mines]
+   (do
+     (reset! game (empty-board rows cols))
+     (reset! started false)
+     (make-ui rows cols))))
+
 
 (defn -main
   []
-  (native!)
-  (show! root))
+  (do
+    (native!)
+    (new-game)
+    (show! ui)))
