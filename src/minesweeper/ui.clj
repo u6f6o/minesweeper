@@ -41,7 +41,9 @@
 
 (defn game-won
   []
-  (println "YEAH"))
+  (do
+    (config! (select ui [:#status]) :icon (face-icons :victory))
+    (repaint! ui)))
 
 
 (defn game-lost
