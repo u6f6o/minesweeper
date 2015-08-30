@@ -50,8 +50,7 @@
     (do
       (doseq [pos coords]
         (expose-field (first pos) (second pos)))
-      (let [status-icon (select ui [:#status])]
-        (config! status-icon :icon (face-icons :defeat)))
+      (config! (select ui [:#status]) :icon (face-icons :defeat))
       (repaint! ui))))
 
 
