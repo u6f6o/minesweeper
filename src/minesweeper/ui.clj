@@ -5,9 +5,11 @@
         [minesweeper game icons]))
 
 
+(def started (atom false))
 (def game (atom (vector nil)))
 (def ui (frame :title "Minesweeper" :on-close :exit))
-(def started (atom false))
+(def mine-count (atom nil))
+
 
 (def levels { :beginner     { :rows 8,  :cols 8,  :mines 10 }
               :intermediate { :rows 16, :cols 16, :mines 40 }
@@ -56,7 +58,7 @@
     (when (not @started)
       (reset! game
               (place-warnings
-               (place-mines @game 10 [row col])))
+               (place-mines @game @mine-count [row col])))
       (reset! started true))
     (swap! game #(clear-field % [row col]))
     (cond
@@ -99,8 +101,9 @@
              (:mines level)))
   ([rows cols mines]
    (do
-     (reset! game (empty-board rows cols))
      (reset! started false)
+     (reset! game (empty-board rows cols))
+     (reset! mine-count mines)
      (make-ui rows cols))))
 
 
