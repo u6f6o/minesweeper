@@ -47,9 +47,12 @@
 (defn game-lost
   []
   (let [coords (to-coords @game)]
-    (doseq [pos coords]
-      (expose-field (first pos) (second pos)))
-    pack! ui))
+    (do
+      (doseq [pos coords]
+        (expose-field (first pos) (second pos)))
+      (let [status-icon (select ui [:#status])]
+        (config! status-icon :icon (face-icons :defeat)))
+      (repaint! ui))))
 
 
 (defn examine-field
@@ -62,31 +65,45 @@
       (reset! started true))
     (swap! game #(clear-field % [row col]))
     (cond
-     (game-won? @game) (println "jgewoejgew")
+     (game-won? @game) (game-won)
      (game-lost? @game) (game-lost)
      :else (expose-field row col))))
 
 
+(defn make-button [row col bg]
+    (button :id     (str "field_" row "_" col)
+            :icon   (cell-icons :button)
+            :listen [:action(fn [e] (examine-field row col))]
+            :group  bg))
 
-(defn make-button [row col]
-    (button :id (str "field_" row "_" col)
-            :icon (cell-icons :button)
-            :listen [:action
-                    (fn [e] (examine-field row col))]))
+
+(defn make-board-panel
+  [rows cols]
+  (let [bg (button-group)]
+    (mig-panel
+     :constraints [(str "gap 0, wrap" rows) "[]" "[]" ]
+     :items       (for [row (range rows) col (range cols)]
+                    (vector (make-button row col bg) "w 24px!, h 24px!")))))
 
 
-(defn make-board
-  [row col]
+(defn make-info-panel
+  []
+  (label :id "status"
+         :icon (face-icons :happy)))
+
+
+(defn make-layout
+  [rows cols]
   (mig-panel
-   :constraints [(str "gap 0, wrap" row) "[]" "[]" ]
-   :items (for [x (range row) y (range col)]
-            (vector (make-button x y) "w 24px!, h 24px!"))))
+   :constraints ["wrap1" "[center]" "[][]" ]
+   :items       [[(make-info-panel)]
+                 [(make-board-panel rows cols)]]))
 
 
 (defn make-ui
   [rows cols]
   (do
-    (config! ui :content (make-board rows cols))
+    (config! ui :content (make-layout rows cols))
     (pack! ui)
     (config! ui :resizable? false)
     (show! ui)))
