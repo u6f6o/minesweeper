@@ -2,27 +2,19 @@
   (:gen-class)
   (:require [clojure.java.io :as io])
   (:use [seesaw core mig]
-        [minesweeper game file]))
+        [minesweeper game icons]))
 
-
-(defn init-icons
-  []
-  (let [fs (list-dir (res-as-file "minesweeper/icons/"))]
-    (reduce
-     #(assoc %1 (keyword (basename %2)) (icon %2))
-     {}
-     fs)))
 
 (defn make-frame
    []
      (frame :title      "Minesweeper"
-            :width      250 ;;(* 24 w)
-            :height     250 ;;(* 24 h)
+            :width      250
+            :height     250
             :on-close   :exit))
+
 
 (def root (make-frame))
 (def board (atom (init-game 16 16 40 [3 3])))
-(def icons (init-icons))
 
 
 (defn select-field
@@ -33,10 +25,10 @@
   [field-attrs]
   (println field-attrs)
   (cond
-   (and (:mine field-attrs) (:flag field-attrs)) (:redmine icons)
-   (:mine field-attrs)                           (:mine icons)
-   (:warn field-attrs)                           ((keyword (str (:warn field-attrs))) icons)
-   :else                                         (:0 icons)))
+   (and (:mine field-attrs) (:flag field-attrs)) (cell-icons :redmine)
+   (:mine field-attrs)                           (cell-icons :mine)
+   (:warn field-attrs)                           (cell-icons (keyword (str (:warn field-attrs))))
+   :else                                         (cell-icons :0)))
 
 (defn expose-field
   [row col]
@@ -71,7 +63,7 @@
 
 (defn make-button [row col]
     (button :id (str "field_" row "_" col)
-            :icon (:button icons)
+            :icon (cell-icons :button)
             :listen [:action
                     (fn [e] (examine-field row col))]))
 

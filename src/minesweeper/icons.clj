@@ -1,4 +1,4 @@
-(ns minesweeper.file
+(ns minesweeper.icons
   "Icons control utility"
   (:require
     [clojure.java.io :as io]
@@ -21,21 +21,20 @@
 (def ^:private init-icons
   (memoize
    (fn [res]
-     (let [parent (comp rest file-seq io/file io/resource res)]
+     (let [parent (rest (file-seq (io/file (io/resource res))))]
        (reduce
         #(assoc %1 (keyword (file-name %2)) (icon/icon %2))
         {}
         parent)))))
 
 
-(defn cell-icon
+(defn cell-icons
   [id]
   (let [icons (init-icons cell-icons-path)]
     (get icons id)))
 
 
-(defn face-icon
+(defn face-icons
   [id]
   (let [icons (init-icons face-icons-path)]
     (get icons id)))
-
