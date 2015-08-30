@@ -85,7 +85,9 @@
   [rows cols]
   (do
     (config! ui :content (make-board rows cols))
-    ))
+    (pack! ui)
+    (config! ui :resizable? false)
+    (show! ui)))
 
 
 (defn new-game
@@ -106,5 +108,4 @@
   []
   (do
     (native!)
-    (new-game)
-    (show! ui)))
+    (new-game)))
