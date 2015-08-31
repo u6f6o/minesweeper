@@ -101,10 +101,28 @@
                  [(make-board-panel rows cols)]]))
 
 
+(defn new-game
+  ([])
+  ([level])
+  ([rows cols mines]))
+
+
+(defn make-menubar
+  []
+  (vector (menu :text "File"
+                :items [(menu-item :text "Beginner"
+                                   :listen [:action (fn [e] (new-game (:beginner levels)))])
+                        (menu-item :text "Intermediate"
+                                   :listen [:action (fn [e] (new-game (:intermediate levels)))])
+                        (menu-item :text "Expert"
+                                   :listen [:action (fn [e] (new-game (:expert levels)))])])))
+
+
 (defn make-ui
   [rows cols]
   (do
     (config! ui :content (make-layout rows cols))
+    (config! ui :menubar (menubar :items (make-menubar)))
     (pack! ui)
     (config! ui :resizable? false)
     (show! ui)))
