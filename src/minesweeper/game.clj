@@ -72,8 +72,8 @@
      mine-counts)))
 
 
-(defn clear-field
-  "Clear single field on the board"
+(defn explore-field
+  "Explore single field on the board"
   [board coords]
   (update-in board coords conj {:explored true}))
 
@@ -82,7 +82,7 @@
   "Create board and place mines and warnings"
   [w h mine-count start-pos]
   (-> (empty-board w h)
-      (clear-field start-pos)
+      (explore-field start-pos)
       (place-mines mine-count start-pos)
       (place-warnings)))
 

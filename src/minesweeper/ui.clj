@@ -64,7 +64,7 @@
               (place-warnings
                (place-mines @game @mine-count [row col])))
       (reset! started true))
-    (swap! game #(clear-field % [row col]))
+    (swap! game #(explore-field % [row col]))
     (cond
      (game-won? @game) (game-won)
      (game-lost? @game) (game-lost)
