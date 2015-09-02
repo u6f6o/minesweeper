@@ -5,15 +5,15 @@
 
 (deftest test-win-conditions
   (testing "All fields cleared"
-    (let [board [[{:flag true} {:flag true} {:flag true}]
-                 [{:flag true} {:mine true} {:flag true}]
-                 [{:flag true} {:flag true} {:flag true}]]]
+    (let [board [[{:explored true} {:explored true} {:explored true}]
+                 [{:explored true} {:mine true}     {:explored true}]
+                 [{:explored true} {:explored true} {:explored true}]]]
       (is
        (game-won? board))))
   (testing "Single covered field left"
-    (let [board [[{:flag true} {:flag true} {:flag true}]
-                 [{:flag true} {:mine true} {:flag true}]
-                 [{:flag true} {:flag true} {}]]]
+    (let [board [[{:explored true} {:explored true} {:explored true}]
+                 [{:explored true} {:mine true}     {:explored true}]
+                 [{:explored true} {:explored true} {}]]]
       (is
        (not (game-won? board)))))
   (testing "No field uncovered"
@@ -32,15 +32,15 @@
 
 (deftest test-lose-conditions
   (testing "Uncover mined field"
-    (let [board [[{} {}                       {}]
-                 [{} {:mine true, :flag true} {}]
-                 [{} {}                       {}]]]
+    (let [board [[{} {}                           {}]
+                 [{} {:mine true, :explored true} {}]
+                 [{} {}                           {}]]]
       (is
        (game-lost? board))))
   (testing "All fields cleared"
-    (let [board [[{:flag true} {:flag true} {:flag true}]
-                 [{:flag true} {:mine true} {:flag true}]
-                 [{:flag true} {:flag true} {:flag true}]]]
+    (let [board [[{:explored true} {:explored true} {:explored true}]
+                 [{:explored true} {:mine true}     {:explored true}]
+                 [{:explored true} {:explored true} {:explored true}]]]
       (is
        (not (game-lost? board)))))
   (testing "No field uncovered"

@@ -26,7 +26,7 @@
   [field-attrs]
   (println field-attrs)
   (cond
-   (and (:mine field-attrs) (:flag field-attrs)) (cell-icons :redmine)
+   (and (:mine field-attrs) (:explored field-attrs)) (cell-icons :redmine)
    (:mine field-attrs)                           (cell-icons :mine)
    (:warn field-attrs)                           (cell-icons (keyword (str (:warn field-attrs))))
    :else                                         (cell-icons :0)))

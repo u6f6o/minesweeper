@@ -75,7 +75,7 @@
 (defn clear-field
   "Clear single field on the board"
   [board coords]
-  (update-in board coords conj {:flag true}))
+  (update-in board coords conj {:explored true}))
 
 
 (defn init-game
@@ -90,13 +90,13 @@
 (defn game-lost?
   "Any mine exploded?"
   [board]
-  (letfn [(pred [m] (and (:mine m) (:flag m)))]
+  (letfn [(pred [m] (and (:mine m) (:explored m)))]
     (pos? (count (to-coords board pred)))))
 
 
 (defn game-won?
   "All fields cleared?"
   [board]
-  (letfn [(pred [m] (or (:mine m) (:flag m)))]
+  (letfn [(pred [m] (or (:mine m) (:explored m)))]
     (= (count (to-coords board pred))
        (count (to-coords board)))))
