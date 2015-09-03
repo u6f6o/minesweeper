@@ -153,3 +153,11 @@
                  [5 1] 3}]
       (is
        (= exp (warnings-freq board))))))
+
+
+(deftest test-explore
+  (testing "Mines and warnings remain"
+    (let [board  [[{:mine true}][{:warn 5}]]
+          result (explore-field (explore-field board [0 0]) [1 0])]
+      (is (= (get-in result [0 0]) {:explored true :mine true}))
+      (is (= (get-in result [1 0]) {:explored true :warn 5})))))
