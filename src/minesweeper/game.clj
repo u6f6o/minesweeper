@@ -78,10 +78,11 @@
   (update-in board coords conj {:explored true}))
 
 
-(defn place-flag
-  "Place a flag to indicate that a cell contains a mine"
+(defn handle-flag
+  "Handles set and remove of a flag"
   [board coords]
-  (update-in board coords conj {:flag true}))
+  (update-in board coords
+             #(assoc % :flag (not (:flag %)))))
 
 
 (defn init-game

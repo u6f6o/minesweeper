@@ -161,3 +161,15 @@
           result (explore-field (explore-field board [0 0]) [1 0])]
       (is (= (get-in result [0 0]) {:explored true :mine true}))
       (is (= (get-in result [1 0]) {:explored true :warn 5})))))
+
+
+(deftest test-flags
+  (testing "No flag present"
+    (let [board [[{}]]]
+      (is (= [[{:flag true}]] (handle-flag board [0 0])))))
+  (testing "Flag not set"
+    (let [board [[{:flag false}]]]
+      (is (= [[{:flag true}]] (handle-flag board [0 0])))))
+  (testing "Flag set"
+    (let [board [[{:flag true}]]]
+      (is (= [[{:flag false}]] (handle-flag board [0 0]))))))
