@@ -78,6 +78,12 @@
   (update-in board coords conj {:explored true}))
 
 
+(defn place-flag
+  "Place a flag to indicate that a cell contains a mine"
+  [board coords]
+  (update-in board coords conj {:flag true}))
+
+
 (defn init-game
   "Create board and place mines and warnings"
   [w h mine-count start-pos]
