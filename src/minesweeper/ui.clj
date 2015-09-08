@@ -30,6 +30,7 @@
           (flag?    [m] (:flag m))]
     (cond
      (redmine? field-attrs) (cell-icons :redmine)
+     (flag? field-attrs)    (cell-icons :flag)
      (mine? field-attrs)    (cell-icons :mine)
      (warn? field-attrs)    (cell-icons (keyword (str (:warn field-attrs))))
      :else                  (cell-icons :0))))
