@@ -24,12 +24,15 @@
 
 (defn choose-icon
   [field-attrs]
-  (println field-attrs)
-  (cond
-   (and (:mine field-attrs) (:explored field-attrs)) (cell-icons :redmine)
-   (:mine field-attrs)                           (cell-icons :mine)
-   (:warn field-attrs)                           (cell-icons (keyword (str (:warn field-attrs))))
-   :else                                         (cell-icons :0)))
+  (letfn [(redmine? [m] (every? m [:explored :mine]))
+          (mine?    [m] (:mine m))
+          (warn?    [m] (:warn m))
+          (flag?    [m] (:flag m))]
+    (cond
+     (redmine? field-attrs) (cell-icons :redmine)
+     (mine? field-attrs)    (cell-icons :mine)
+     (warn? field-attrs)    (cell-icons (keyword (str (:warn field-attrs))))
+     :else                  (cell-icons :0))))
 
 
 (defn expose-field
