@@ -3,9 +3,7 @@
   (:require
     [clojure.java.io :as io]
     [clojure.string  :as str]
-    [seesaw.icon :as icon])
-  (:import
-    [java.io File]))
+    [seesaw.icon :as icon]))
 
 
 (def ^:private cell-icons-path "minesweeper/icons/cell")
