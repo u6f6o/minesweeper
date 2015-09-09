@@ -26,8 +26,8 @@
   [board [x y]]
   (let [w (count board)
         h (count (first board))]
-    (for [dx (map #(+ % x) [-1 0 1])
-          dy (map #(+ % y) [-1 0 1])
+    (for [dx (map (partial + x) [-1 0 1])
+          dy (map (partial + y) [-1 0 1])
           :when (and (or (not= x dx) (not= y dy))
                      (> w dx -1)
                      (> h dy -1))]
