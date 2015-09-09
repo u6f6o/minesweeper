@@ -105,5 +105,5 @@
   "All fields cleared?"
   [board]
   (letfn [(pred [m] (or (:mine m) (:explored m)))]
-    (= (count (to-coords board pred))
-       (count (to-coords board)))))
+    (= (to-coords board pred)
+       (to-coords board))))
