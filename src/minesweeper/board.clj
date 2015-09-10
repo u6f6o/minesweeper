@@ -1,4 +1,4 @@
-(ns minesweeper.game
+(ns minesweeper.board
   (:use [clojure.pprint]))
 
 

@@ -1,6 +1,6 @@
-(ns minesweeper.game-test
+(ns minesweeper.board-test
   (:require [clojure.test :refer :all]
-            [minesweeper.game :refer :all]))
+            [minesweeper.board :refer :all]))
 
 
 (deftest test-win-conditions

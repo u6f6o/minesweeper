@@ -2,7 +2,7 @@
   (:gen-class)
   (:require [clojure.java.io :as io])
   (:use [seesaw core mig]
-        [minesweeper game icons]))
+        [minesweeper board icons]))
 
 
 (def started (atom false))
