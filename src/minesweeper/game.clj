@@ -85,15 +85,6 @@
              #(assoc % :flag (not (:flag %)))))
 
 
-(defn init-game
-  "Create board and place mines and warnings"
-  [w h mine-count start-pos]
-  (-> (empty-board w h)
-      (explore-field start-pos)
-      (place-mines mine-count start-pos)
-      (place-warnings)))
-
-
 (defn game-lost?
   "Any mine exploded?"
   [board]
