@@ -2,11 +2,11 @@
 
 
 
-(defn register-event
+(defn register
   [e f]
   ())
 
-(defn fire-event
+(defn fire
   [e d]
   ())
 
