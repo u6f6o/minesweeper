@@ -1,7 +1,7 @@
 (ns minesweeper.dispatch)
 
 
-(def receivers (atom {}))
+(def ^:private receivers (atom {}))
 
 
 (defn register
@@ -18,4 +18,7 @@
 
 (defn fire
   [evt data]
-  ())
+  (doseq [trigger (get @receivers evt)]
+    (apply trigger data)))
+
+
