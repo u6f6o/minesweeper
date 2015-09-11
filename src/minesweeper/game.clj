@@ -1,7 +1,10 @@
 (ns minesweeper.game
-  (:use [minesweeper board dispatch ui]))
+  (:require [minesweeper.board :as board]
+            [minesweeper.dispatch :as disp]
+            [minesweeper.ui :as ui]))
 
 
+(def board (atom [[{}]]))
 
 ;;   SCENARIOS:
 
@@ -34,6 +37,26 @@
 ;;      -> ui:    recieve :flag-set or :flag-removed
 ;;         ui:    change icon of field
 ;;         ui:    repaint smiley
+
+
+
+(defn explore-field
+  [data]
+  (let [explore #(board/explore-field %1 (vector (:x %2) (:y %2)))
+        board (swap! board explore data)]
+    (cond
+     (board/game-won? board)   (disp/fire :game-won data)
+     (board/game-lost? board)  (disp/fire :game-lost data)
+     :else                     (disp/fire :field-explored data))))
+
+
+(disp/register :explore-field #'explore-field)
+
+
+
+
+
+
 
 
 
