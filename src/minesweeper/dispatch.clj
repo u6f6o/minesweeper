@@ -5,14 +5,17 @@
 
 
 (defn register
-  [evt f]
+  [evt trigger]
   (if
-    (var? f)
+    (var? trigger)
     (swap! receivers
            #(assoc %1 %2 (conj (or (get %1 %2) #{}) %3))
            evt
-           f)
+           trigger)
     (throw
-     (IllegalStateException. "wrapperd function must be a var"))))
+     (IllegalStateException. "trigger must be a function wrapped in a var"))))
 
 
+(defn fire
+  [evt data]
+  ())
