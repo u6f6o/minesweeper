@@ -85,6 +85,12 @@
              #(assoc % :flag (not (:flag %)))))
 
 
+(defn game-started?
+  "At least one field explored?"
+  [board]
+  (pos? (count (to-coords board :explored))))
+
+
 (defn game-lost?
   "Any mine exploded?"
   [board]

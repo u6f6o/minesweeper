@@ -1,6 +1,8 @@
 (ns minesweeper.ui
   (:gen-class)
-  (:require [clojure.java.io :as io])
+  (:require [clojure.java.io :as io]
+            [minesweeper.dispatch :as disp]
+            [minesweeper.game :as game])
   (:use [seesaw core mig]
         [minesweeper board icons]))
 
@@ -43,6 +45,19 @@
     (config! field :icon (choose-icon field-attrs))))
 
 
+
+(defn uncover-field
+  ([data]
+   (let [row   (:row data)
+         col   (:col data)
+         attrs (:attrs data)]
+     (uncover-field row col attrs)))
+  ([row col attrs]
+   (let [field (select-field row col)]
+     (config! field :icon (choose-icon attrs)))))
+
+
+
 (defn game-won
   []
   (do
@@ -61,24 +76,17 @@
 
 
 (defn examine-field
-  [row col]
-  (do
-    (when (not @started)
-      (reset! game
-              (place-warnings
-               (place-mines @game @mine-count [row col])))
-      (reset! started true))
-    (swap! game #(explore-field % [row col]))
-    (cond
-     (game-won? @game) (game-won)
-     (game-lost? @game) (game-lost)
-     :else (expose-field row col))))
+  [data]
+  (let [row        (:row data)
+        col        (:col data)
+        mine-count (:mines (:beginner levels))]
+    (disp/fire :explore-field {:row row, :col col, :mine-count mine-count})))
 
 
 (defn make-button [row col bg]
     (button :id     (str "field_" row "_" col)
             :icon   (cell-icons :button)
-            :listen [:action(fn [e] (examine-field row col))]
+            :listen [:action(fn [e] (disp/fire :explore-field {:row row :col col :mine-count (:mines (:beginner levels))}))]
             :group  bg))
 
 
@@ -145,6 +153,10 @@
      (reset! game (empty-board rows cols))
      (reset! mine-count mines)
      (make-ui rows cols))))
+
+
+(disp/register :uncover-field #'uncover-field)
+
 
 
 (defn -main

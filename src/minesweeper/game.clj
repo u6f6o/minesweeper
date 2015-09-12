@@ -1,56 +1,44 @@
 (ns minesweeper.game
   (:require [minesweeper.board :as board]
-            [minesweeper.dispatch :as disp]
-            [minesweeper.ui :as ui]))
+            [minesweeper.dispatch :as disp]))
 
 
-(def board (atom [[{}]]))
+(def board (atom (vec (repeat 8 (vec (repeat 8 {}))))))
 
-;;   SCENARIOS:
 
-;;   1. USER CLICKS ON CELL WITH NO MINE
-;;      <- ui:    fire :explore-field [1 1]
-;;      -> game:  receive :explore-field [1 1]
-;;         board: assoc :explored flag to field
-;;         goard: check win/lost condition => nothing
-;;      <- game:  fire :field-explored [1 1]
-;;      -> ui:    receive :field-explored [1 1]
-;;         ui:    change icon of field
-;;         ui:    repaint cell
 
-;;   2. USER TRIGGERS FINAL STATE
-;;      <- ui:    fire :explored-field [1 1]
-;;      -> game:  receive: :explore-field [1 1]
-;;         board: assoc :explored flag to field
-;;         board: check win/lost condition => won/lost
-;;      <- game:  fire :game-lost or :game-won
-;;      -> ui:    recieve :game-lost or :game-won
-;;         ui:    make everything unclickable
-;;         ui:    uncover and repaint all cells
-;;         ui:    repaint smiley
+(defn init-game
+  [board mine-count start-pos]
+  (-> board
+      (board/place-mines mine-count start-pos)
+      (board/place-warnings)))
 
-;;   3. USER SETS FLAG
-;;      <- ui:    fire :handle-flag [1 1]
-;;      -> game:  receive: :handle-flag [1 1]
-;;         board: change flag set on field (true/false)
-;;      <- game:  fire :flag-set or :flag-removed
-;;      -> ui:    recieve :flag-set or :flag-removed
-;;         ui:    change icon of field
-;;         ui:    repaint smiley
 
+(defn explore
+  [board data]
+  (let [mine-count (:mine-count data)
+        position   (vector (:row data) (:col data))]
+    (if (not (board/game-started? board))
+      (-> board
+          (init-game mine-count position)
+          (board/explore-field position))
+      (board/explore-field board position))))
 
 
 (defn explore-field
   [data]
-  (let [explore #(board/explore-field %1 (vector (:x %2) (:y %2)))
-        board (swap! board explore data)]
-    (cond
-     (board/game-won? board)   (disp/fire :game-won data)
-     (board/game-lost? board)  (disp/fire :game-lost data)
-     :else                     (disp/fire :field-explored data))))
+  (do
+    (let [board (swap! board explore data)
+          attrs (get-in board (vector (:row data) (:col data)))]
+      (cond
+       (board/game-won? board)   (disp/fire :game-won data)
+       (board/game-lost? board)  (disp/fire :game-lost data)
+       :else                     (disp/fire :uncover-field (assoc data :attrs attrs))))))
+
 
 
 (disp/register :explore-field #'explore-field)
+
 
 
 

@@ -18,7 +18,8 @@
 
 (defn fire
   [evt data]
-  (doseq [trigger (get @receivers evt)]
-    (apply trigger data)))
+  (do
+    (doseq [trigger (get @receivers evt)]
+      (eval (trigger data)))))
 
 
