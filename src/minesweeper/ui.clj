@@ -7,16 +7,7 @@
         [minesweeper board icons]))
 
 
-(def started (atom false))
-(def game (atom (vector nil)))
 (def ui (frame :title "Minesweeper" :on-close :exit))
-(def mine-count (atom nil))
-
-
-(def levels { :beginner     { :rows 8,  :cols 8,  :mines 10 }
-              :intermediate { :rows 16, :cols 16, :mines 40 }
-              :expert       { :rows 30, :cols 16, :mines 99 }})
-
 
 
 (defn select-field
@@ -37,6 +28,10 @@
      (warn? field-attrs)    (cell-icons (keyword (str (:warn field-attrs))))
      :else                  (cell-icons :0))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;      TRIGGER FUNCTIONS      ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn uncover-field
   ([data]
@@ -69,29 +64,30 @@
       (repaint! ui))))
 
 
-(defn examine-field
-  [data]
-  (let [row        (:row data)
-        col        (:col data)
-        mine-count (:mines (:beginner levels))]
-    (disp/fire :explore-field
-               {:row row :col col :mine-count mine-count})))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;         UI FUNCTIONS        ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn new-game
+  [level]
+  (disp/fire :new-game {:level level}))
 
 
-(defn make-button [row col bg]
-    (button :id     (str "field_" row "_" col)
-            :icon   (cell-icons :button)
-            :listen [:action(fn [e] (disp/fire :explore-field {:row row :col col :mine-count (:mines (:beginner levels))}))]
-            :group  bg))
+(defn make-button
+  [row col level bg]
+  (button :id     (str "field_" row "_" col)
+          :icon   (cell-icons :button)
+          :listen [:action(fn [e] (disp/fire :explore-field {:row row :col col :level level}))]
+          :group  bg))
 
 
 (defn make-board-panel
-  [rows cols]
+  [rows cols level]
   (let [bg (button-group)]
     (mig-panel
      :constraints [(str "gap 0, wrap" rows) "[]" "[]" ]
      :items       (for [row (range rows) col (range cols)]
-                    (vector (make-button row col bg) "w 24px!, h 24px!")))))
+                    (vector (make-button row col level bg) "w 24px!, h 24px!")))))
 
 
 (defn make-info-panel
@@ -101,63 +97,45 @@
 
 
 (defn make-layout
-  [rows cols]
+  [rows cols level]
   (mig-panel
    :constraints ["wrap1" "[center]" "[][]" ]
    :items       [[(make-info-panel)]
-                 [(make-board-panel rows cols)]]))
-
-
-(defn new-game
-  ([])
-  ([level])
-  ([rows cols mines]))
+                 [(make-board-panel rows cols level)]]))
 
 
 (defn make-menubar
   []
   (vector (menu :text "File"
                 :items [(menu-item :text "Beginner"
-                                   :listen [:action (fn [e] (new-game (:beginner levels)))])
+                                   :listen [:action (fn [e] (new-game (:beginner game/levels)))])
                         (menu-item :text "Intermediate"
-                                   :listen [:action (fn [e] (new-game (:intermediate levels)))])
+                                   :listen [:action (fn [e] (new-game (:intermediate game/levels)))])
                         (menu-item :text "Expert"
-                                   :listen [:action (fn [e] (new-game (:expert levels)))])])))
+                                   :listen [:action (fn [e] (new-game (:expert game/levels)))])])))
 
 
 (defn make-ui
-  [rows cols]
-  (do
-    (config! ui :content (make-layout rows cols))
-    (config! ui :menubar (menubar :items (make-menubar)))
-    (pack! ui)
-    (config! ui :resizable? false)
-    (show! ui)))
-
-
-(defn new-game
-  ([]
-   (new-game (:beginner levels)))
-  ([level]
-   (new-game (:rows level)
-             (:cols level)
-             (:mines level)))
-  ([rows cols mines]
-   (do
-     (reset! started false)
-     (reset! game (empty-board rows cols))
-     (reset! mine-count mines)
-     (make-ui rows cols))))
+  [data]
+  (let [level (:level data)
+        rows  (:rows level)
+        cols  (:cols level)]
+    (do
+      (config! ui :content (make-layout rows cols level))
+      (config! ui :menubar (menubar :items (make-menubar)))
+      (pack! ui)
+      (config! ui :resizable? false)
+      (show! ui))))
 
 
 (disp/register :game-won #'game-won)
 (disp/register :game-lost #'game-lost)
+(disp/register :game-initialized #'make-ui)
 (disp/register :uncover-field #'uncover-field)
-
 
 
 (defn -main
   []
   (do
     (native!)
-    (new-game)))
+    (new-game (:beginner game/levels))))

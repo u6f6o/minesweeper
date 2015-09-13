@@ -3,23 +3,40 @@
             [minesweeper.dispatch :as disp]))
 
 
-(def board (atom (vec (repeat 8 (vec (repeat 8 {}))))))
+(def levels { :beginner     { :rows 8,  :cols 8,  :mines 10 }
+              :intermediate { :rows 16, :cols 16, :mines 40 }
+              :expert       { :rows 30, :cols 16, :mines 99 }})
+
+(def level (atom {}))
+(def board (atom []))
 
 
-(defn init-game
+(defn new-game
+  [data]
+  (let [new-level (:level data)]
+    (do
+      (reset! level new-level)
+      (reset! board (board/empty-board
+                     (:rows new-level)
+                     (:cols new-level)))
+      (disp/fire :game-initialized data))))
+
+
+(defn start-game
   [board mine-count start-pos]
-  (-> board
-      (board/place-mines mine-count start-pos)
-      (board/place-warnings)))
+  (do
+    (-> board
+        (board/place-mines mine-count start-pos)
+        (board/place-warnings))))
 
 
 (defn explore
   [board data]
-  (let [mine-count (:mine-count data)
+  (let [mine-count (:mines (:level data))
         position   (vector (:row data) (:col data))]
     (if (not (board/game-started? board))
       (-> board
-          (init-game mine-count position)
+          (start-game mine-count position)
           (board/explore-field position))
       (board/explore-field board position))))
 
@@ -37,7 +54,7 @@
 
 
 (disp/register :explore-field #'explore-field)
-
+(disp/register :new-game #'new-game)
 
 
 
