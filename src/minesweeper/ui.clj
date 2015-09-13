@@ -38,14 +38,6 @@
      :else                  (cell-icons :0))))
 
 
-(defn expose-field
-  [row col]
-  (let [field (select-field row col)
-        field-attrs (get-in @game [row col])]
-    (config! field :icon (choose-icon field-attrs))))
-
-
-
 (defn uncover-field
   ([data]
    (let [row   (:row data)
@@ -57,20 +49,22 @@
      (config! field :icon (choose-icon attrs)))))
 
 
-
 (defn game-won
-  []
+  [data]
   (do
+    (uncover-field data)
     (config! (select ui [:#status]) :icon (face-icons :victory))
     (repaint! ui)))
 
 
 (defn game-lost
-  []
-  (let [coords (to-coords @game)]
+  [data]
+  (let [board (:board data)
+        w     (count board)
+        h     (count (first board))]
     (do
-      (doseq [pos coords]
-        (expose-field (first pos) (second pos)))
+      (doseq [row (range w) col (range h)]
+        (uncover-field row col (get-in board [row col])))
       (config! (select ui [:#status]) :icon (face-icons :defeat))
       (repaint! ui))))
 
@@ -80,7 +74,8 @@
   (let [row        (:row data)
         col        (:col data)
         mine-count (:mines (:beginner levels))]
-    (disp/fire :explore-field {:row row, :col col, :mine-count mine-count})))
+    (disp/fire :explore-field
+               {:row row :col col :mine-count mine-count})))
 
 
 (defn make-button [row col bg]
@@ -155,6 +150,8 @@
      (make-ui rows cols))))
 
 
+(disp/register :game-won #'game-won)
+(disp/register :game-lost #'game-lost)
 (disp/register :uncover-field #'uncover-field)
 
 

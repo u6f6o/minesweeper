@@ -6,7 +6,6 @@
 (def board (atom (vec (repeat 8 (vec (repeat 8 {}))))))
 
 
-
 (defn init-game
   [board mine-count start-pos]
   (-> board
@@ -29,12 +28,12 @@
   [data]
   (do
     (let [board (swap! board explore data)
-          attrs (get-in board (vector (:row data) (:col data)))]
+          attrs (get-in board (vector (:row data) (:col data)))
+          data  (assoc data :attrs attrs)]
       (cond
        (board/game-won? board)   (disp/fire :game-won data)
-       (board/game-lost? board)  (disp/fire :game-lost data)
-       :else                     (disp/fire :uncover-field (assoc data :attrs attrs))))))
-
+       (board/game-lost? board)  (disp/fire :game-lost (assoc data :board board))
+       :else                     (disp/fire :uncover-field data)))))
 
 
 (disp/register :explore-field #'explore-field)
