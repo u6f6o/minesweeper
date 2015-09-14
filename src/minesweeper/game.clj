@@ -7,11 +7,11 @@
               :intermediate { :rows 16, :cols 16, :mines 40 }
               :expert       { :rows 30, :cols 16, :mines 99 }})
 
-(def level (atom {}))
-(def board (atom []))
+(def ^:private level (atom {}))
+(def ^:private board (atom []))
 
 
-(defn new-game
+(defn- new-game
   [data]
   (let [new-level (:level data)]
     (do
@@ -22,7 +22,7 @@
       (disp/fire :game-initialized data))))
 
 
-(defn start-game
+(defn- start-game
   [board mine-count start-pos]
   (do
     (-> board
@@ -30,7 +30,7 @@
         (board/place-warnings))))
 
 
-(defn explore
+(defn- explore
   [board data]
   (let [mine-count (:mines (:level data))
         position   (vector (:row data) (:col data))]
@@ -41,7 +41,7 @@
       (board/explore-field board position))))
 
 
-(defn explore-field
+(defn- explore-field
   [data]
   (do
     (let [board (swap! board explore data)

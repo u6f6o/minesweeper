@@ -4,7 +4,7 @@
             [minesweeper.dispatch :as disp]
             [minesweeper.game :as game])
   (:use [seesaw core mig]
-        [minesweeper board icons]))
+        [minesweeper icons]))
 
 
 (def ui (frame :title "Minesweeper" :on-close :exit))
