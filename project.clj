@@ -1,4 +1,4 @@
-(defproject minesweeper "0.1.0-SNAPSHOT"
+(defproject minesweeper "1.0.0"
   :description "Minesweeper game for learning purposes"
   :url "https://github.com/u6f6o/minesweeper"
   :license {:name "The MIT License (MIT)"
