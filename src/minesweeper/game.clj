@@ -24,10 +24,9 @@
 
 (defn- start-game
   [board mine-count start-pos]
-  (do
-    (-> board
-        (board/place-mines mine-count start-pos)
-        (board/place-warnings))))
+  (-> board
+      (board/place-mines mine-count start-pos)
+      (board/place-warnings)))
 
 
 (defn- explore
@@ -43,14 +42,13 @@
 
 (defn- explore-field
   [data]
-  (do
-    (let [board (swap! board explore data)
-          attrs (get-in board (vector (:row data) (:col data)))
-          data  (assoc data :attrs attrs)]
-      (cond
-       (board/game-won? board)   (disp/fire :game-won data)
-       (board/game-lost? board)  (disp/fire :game-lost (assoc data :board board))
-       :else                     (disp/fire :uncover-field data)))))
+  (let [board (swap! board explore data)
+        attrs (get-in board (vector (:row data) (:col data)))
+        data  (assoc data :attrs attrs)]
+    (cond
+     (board/game-won? board)   (disp/fire :game-won data)
+     (board/game-lost? board)  (disp/fire :game-lost (assoc data :board board))
+     :else                     (disp/fire :uncover-field data))))
 
 
 (disp/register :explore-field #'explore-field)
