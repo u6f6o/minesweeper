@@ -1,13 +1,13 @@
 # minesweeper
 [![Build Status](https://travis-ci.org/u6f6o/minesweeper.svg?branch=master)](https://travis-ci.org/u6f6o/minesweeper)
 
-Minesweeper game for learning purposes
+A simple minesweeper game to get hands on clojure.
 
 ## Usage
 
     $ lein run
 
-## Icons 
+## Icons
 All icons in the game originate from https://github.com/HaikuArchives/Minesweeper. Thx for the great work!
 
 ## License
