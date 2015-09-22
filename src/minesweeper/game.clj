@@ -51,16 +51,16 @@
      :else                     (disp/fire :uncover-field data))))
 
 
-(defn- handle-flag
+(defn- toggle-flag
   [data]
   (let [position (vector (:row data) (:col data))]
     (do
-      (swap! board (partial board/handle-flag) position)
+      (swap! board (partial board/toggle-flag) position)
       (disp/fire :uncover-field data))))
 
 
 (disp/register :explore-field #'explore-field)
-(disp/register :handle-flag #'handle-flag)
+(disp/register :toggle-flag #'toggle-flag)
 (disp/register :new-game #'new-game)
 
 

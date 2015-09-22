@@ -1,5 +1,6 @@
 (ns minesweeper.ui
   (:gen-class)
+  (:import (java.awt.event MouseEvent))
   (:require [clojure.java.io :as io]
             [minesweeper.dispatch :as disp]
             [minesweeper.game :as game])
@@ -29,10 +30,6 @@
      :else                  (cell-icons :0))))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;      TRIGGER FUNCTIONS      ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defn uncover-field
   ([data]
    (let [row   (:row data)
@@ -44,7 +41,7 @@
      (config! field :icon (choose-icon attrs)))))
 
 
-(defn game-won
+(defn announce-victory
   [data]
   (do
     (uncover-field data)
@@ -52,7 +49,7 @@
     (repaint! ui)))
 
 
-(defn game-lost
+(defn announce-defeat
   [data]
   (let [board (:board data)
         w     (count board)
@@ -64,10 +61,6 @@
       (repaint! ui))))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;         UI FUNCTIONS        ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defn new-game
   [level]
   (disp/fire :new-game {:level level}))
@@ -75,10 +68,15 @@
 
 (defn make-button
   [row col level bg]
-  (button :id     (str "field_" row "_" col)
-          :icon   (cell-icons :button)
-          :listen [:action(fn [e] (disp/fire :explore-field {:row row :col col :level level}))]
-          :group  bg))
+  (letfn [(left-click? [e] (= (.getButton e) MouseEvent/BUTTON1))]
+    (button :id     (str "field_" row "_" col)
+            :icon   (cell-icons :button)
+            :listen [:mouse-clicked
+                     (fn [e]
+                       (if (left-click? e)
+                         (disp/fire :explore-field {:row row :col col :level level})
+                         (disp/fire :toggle-flag {:row row :col col})))]
+            :group  bg)))
 
 
 (defn make-board-panel
@@ -128,8 +126,8 @@
       (show! ui))))
 
 
-(disp/register :game-won #'game-won)
-(disp/register :game-lost #'game-lost)
+(disp/register :game-won #'announce-victory)
+(disp/register :game-lost #'announce-defeat)
 (disp/register :game-initialized #'make-ui)
 (disp/register :uncover-field #'uncover-field)
 

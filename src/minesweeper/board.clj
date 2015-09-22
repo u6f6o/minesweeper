@@ -78,8 +78,8 @@
   (update-in board coords conj {:explored true}))
 
 
-(defn handle-flag
-  "Handles set and remove of a flag"
+(defn toggle-flag
+  "Sets and removes a flag"
   [board coords]
   (update-in board coords
              #(assoc % :flag (not (:flag %)))))

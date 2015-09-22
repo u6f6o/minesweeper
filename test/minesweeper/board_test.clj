@@ -166,10 +166,10 @@
 (deftest test-flags
   (testing "No flag present"
     (let [board [[{}]]]
-      (is (= [[{:flag true}]] (handle-flag board [0 0])))))
+      (is (= [[{:flag true}]] (toggle-flag board [0 0])))))
   (testing "Flag not set"
     (let [board [[{:flag false}]]]
-      (is (= [[{:flag true}]] (handle-flag board [0 0])))))
+      (is (= [[{:flag true}]] (toggle-flag board [0 0])))))
   (testing "Flag set"
     (let [board [[{:flag true}]]]
-      (is (= [[{:flag false}]] (handle-flag board [0 0]))))))
+      (is (= [[{:flag false}]] (toggle-flag board [0 0]))))))
