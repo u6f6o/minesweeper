@@ -54,11 +54,10 @@
   (let [board (:board data)
         w     (count board)
         h     (count (first board))]
-    (do
-      (doseq [row (range w) col (range h)]
-        (uncover-field row col (get-in board [row col])))
-      (config! (select ui [:#status]) :icon (face-icons :defeat))
-      (repaint! ui))))
+    (doseq [row (range w) col (range h)]
+      (uncover-field row col (get-in board [row col])))
+    (config! (select ui [:#status]) :icon (face-icons :defeat))
+    (repaint! ui)))
 
 
 (defn new-game
@@ -118,12 +117,11 @@
   (let [level (:level data)
         rows  (:rows level)
         cols  (:cols level)]
-    (do
-      (config! ui :content (make-layout rows cols level))
-      (config! ui :menubar (menubar :items (make-menubar)))
-      (pack! ui)
-      (config! ui :resizable? false)
-      (show! ui))))
+    (config! ui :content (make-layout rows cols level))
+    (config! ui :menubar (menubar :items (make-menubar)))
+    (pack! ui)
+    (config! ui :resizable? false)
+    (show! ui)))
 
 
 (disp/register :game-won #'announce-victory)

@@ -14,12 +14,11 @@
 (defn- new-game
   [data]
   (let [new-level (:level data)]
-    (do
-      (reset! level new-level)
-      (reset! board (board/empty-board
-                     (:rows new-level)
-                     (:cols new-level)))
-      (disp/fire :game-initialized data))))
+    (reset! level new-level)
+    (reset! board (board/empty-board
+                   (:rows new-level)
+                   (:cols new-level)))
+    (disp/fire :game-initialized data)))
 
 
 (defn- start-game
@@ -54,9 +53,8 @@
 (defn- toggle-flag
   [data]
   (let [position (vector (:row data) (:col data))]
-    (do
-      (swap! board (partial board/toggle-flag) position)
-      (disp/fire :uncover-field data))))
+    (swap! board (partial board/toggle-flag) position)
+    (disp/fire :uncover-field data)))
 
 
 (disp/register :explore-field #'explore-field)
