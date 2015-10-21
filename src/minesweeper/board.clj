@@ -31,17 +31,17 @@
   [xs]
   (apply bit-or (conj (map state->bit xs) 0)))
 
-(defn- any-with-all?
-  [& s]
+(defn- every-state
+  [f & s]
   (let [cs (combine-states s)]
     (fn [coll]
-      (some #(= cs (bit-and % cs)) coll))))
+      (f #(= cs (bit-and % cs)) coll))))
 
-(defn- all-with-any?
-  [& s]
+(defn- any-state
+  [f & s]
   (let [cs (combine-states s)]
     (fn [coll]
-      (every? #(pos? (bit-and % cs)) coll))))
+      (f #(pos? (bit-and % cs)) coll))))
 
 (defn- board->meta
   [b]
@@ -50,9 +50,13 @@
         pred     (fn [x] (= x (bit-and x meta-bit)))]
     (first (filter (comp pred trans) levels))))
 
+(defn- board-size
+  [b]
+  (take 2 (val (board->meta b))))
+
 (defn- row-size
   [b]
-  (first (val (board->meta b))))
+  (first (board-size b)))
 
 (defn- pos->idx
   [b [x y]]
@@ -63,6 +67,19 @@
     (vector
      (mod i (row-size b))
      (quot i (row-size b))))
+
+
+(def cells-w-mines
+  (every-state filter :mine))
+
+(def game-started?
+  (every-state some :explored))
+
+(def game-lost?
+  (every-state some :explored :mine))
+
+(def game-won?
+  (any-state every? :explored :mine))
 
 
 
@@ -76,26 +93,18 @@
           (vec (repeat (dec (* w h)) 0)))))
 
 
-;;    (vec (repeat (* w h) meta-bit))))
-    ;;(println (str meta-bit w h))))
-    ;;(vec (repeat (* w h) meta-bit))))
-
-(state->bit :beginner)
-(count (empty-board :beginner))
-
-
 (defn neighbour-cells
   "Locate neighbour cells based on coordinates [x y],
   respecting board width and height"
   [board idx]
-  (let [[x y] (idx->pos idx)
+  (let [[x y] (idx->pos board idx)
         [w h] (board-size board)]
     (for [dx (map (partial + x) [-1 0 1])
           dy (map (partial + y) [-1 0 1])
           :when (and (or (not= x dx) (not= y dy))
                      (> w dx -1)
                      (> h dy -1))]
-      (pos->idx dx dy))))
+      (pos->idx board [dx dy]))))
 
 
 (defn warnings-freq
@@ -136,7 +145,6 @@
      board
      mine-counts)))
 
-(defn
 
 
 (defn explore-field
@@ -155,11 +163,3 @@
             #(assoc % :flag (not (:flag %))))))
 
 
-(def game-started?
-  (any-with-all? :explored))
-
-(def game-lost?
-  (any-with-all? :explored :mine))
-
-(def game-won?
-  (all-with-any? :explored :mine))
