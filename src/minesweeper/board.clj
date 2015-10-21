@@ -70,6 +70,16 @@
 
 
 
+(defn empty-board
+  "Create an empty board with
+  the specified width and height"
+  [level]
+  (let [meta-bit (state->bit level)
+        [w h _]  (get levels level)]
+    (into [meta-bit]
+          (vec (repeat (dec (* w h)) 0)))))
+
+
 (def cells-w-mines
   (every-state [:mine] filter))
 
@@ -83,23 +93,12 @@
   (any-state [:explored :mine] every?))
 
 
-
-(defn empty-board
-  "Create an empty board with
-  the specified width and height"
-  [level]
-  (let [meta-bit (state->bit level)
-        [w h _]  (get levels level)]
-    (into [meta-bit]
-          (vec (repeat (dec (* w h)) 0)))))
-
-
 (defn neighbour-cells
   "Locate neighbour cells based on coordinates [x y],
   respecting board width and height"
   [board idx]
   (let [[x y] (idx->pos board idx)
-        [w h] (board-size board)]
+        [w h] (board->meta board :w :h)]
     (for [dx (map (partial + x) [-1 0 1])
           dy (map (partial + y) [-1 0 1])
           :when (and (or (not= x dx) (not= y dy))
@@ -108,13 +107,19 @@
       (pos->idx board [dx dy]))))
 
 
+(defn find-warnings
+  [board]
+  (let [mines (cells-w-mines board)]
+    (mapcat
+     (partial neighbour-cells board) mines)))
+
+
 (defn warnings-freq
   [board]
   "Count the number of nearby mines"
-  (let [mines    (filter (partial bit-and 2r1) board)
-        warnings (mapcat (partial neighbour-cells board) mines)]
+  (let [warnings (find-warnings board)]
     (frequencies
-      (remove (set mines) warnings))))
+     (remove (set mines) warnings))))
 
 
 (defn random-mines
