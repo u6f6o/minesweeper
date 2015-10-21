@@ -2,9 +2,9 @@
   (:use [clojure.pprint]))
 
 
-(def levels { :beginner     [8  8  10]
-              :intermediate [16 16 40]
-              :expert       [30 16 99] })
+(def levels { :beginner     { :w 8  :h 8  :m 10 }
+              :intermediate { :w 16 :h 16 :m 40 }
+              :expert       { :w 30 :h 16 :m 99 }})
 
 
 (def states { :mine         2r00000000000001
@@ -32,54 +32,55 @@
   (apply bit-or (conj (map state->bit xs) 0)))
 
 (defn- every-state
-  [f & s]
-  (let [cs (combine-states s)]
+  [xs f]
+  (let [cs (combine-states xs)]
     (fn [coll]
       (f #(= cs (bit-and % cs)) coll))))
 
 (defn- any-state
-  [f & s]
-  (let [cs (combine-states s)]
+  [xs f]
+  (let [cs (combine-states xs)]
     (fn [coll]
       (f #(pos? (bit-and % cs)) coll))))
 
 (defn- board->meta
-  [b]
-  (let [meta-bit (first b)
-        trans    (fn [x] (state->bit (key x)))
-        pred     (fn [x] (= x (bit-and x meta-bit)))]
-    (first (filter (comp pred trans) levels))))
-
-(defn- board-size
-  [b]
-  (take 2 (val (board->meta b))))
-
-(defn- row-size
-  [b]
-  (first (board-size b)))
+  ([b]
+   (let [meta-bit (first b)
+         trans    (fn [x] (state->bit (key x)))
+         pred     (fn [x] (= x (bit-and x meta-bit)))]
+     (val
+      (first
+       (filter (comp pred trans) levels)))))
+  ([b & ks]
+   (let [bm (board->meta b)]
+     (if (> (count ks) 1)
+       (vec (vals (select-keys bm ks)))
+       (get bm (first ks))))))
 
 (defn- pos->idx
   [b [x y]]
-    (+ x (* y (row-size b))))
+  (+ x (* y (board->meta b :w))))
 
 (defn- idx->pos
   [b i]
+  (let [row-size (board->meta b :w)]
     (vector
-     (mod i (row-size b))
-     (quot i (row-size b))))
+     (mod i row-size)
+     (quot i row-size))))
+
 
 
 (def cells-w-mines
-  (every-state filter :mine))
+  (every-state [:mine] filter))
 
 (def game-started?
-  (every-state some :explored))
+  (every-state [:explored] some))
 
 (def game-lost?
-  (every-state some :explored :mine))
+  (every-state [:explored :mine] some))
 
 (def game-won?
-  (any-state every? :explored :mine))
+  (any-state [:explored :mine] every?))
 
 
 
