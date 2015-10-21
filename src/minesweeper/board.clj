@@ -108,16 +108,16 @@
 
 
 (defn find-warnings
-  [board]
-  (let [mines (cells-w-mines board)]
-    (mapcat
-     (partial neighbour-cells board) mines)))
+  [board mines]
+  (mapcat
+   (partial neighbour-cells board) mines))
 
 
 (defn warnings-freq
   [board]
   "Count the number of nearby mines"
-  (let [warnings (find-warnings board)]
+  (let [mines    (cells-w-mines board)
+        warnings (find-warnings board mines)]
     (frequencies
      (remove (set mines) warnings))))
 
