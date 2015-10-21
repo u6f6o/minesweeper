@@ -35,13 +35,13 @@
   [xs coll-f]
   (let [cs (combine-states xs)]
     (fn [coll]
-      (f #(= cs (bit-and % cs)) coll))))
+      (coll-f #(= cs (bit-and % cs)) coll))))
 
 (defn- any-state
   [xs coll-f]
   (let [cs (combine-states xs)]
     (fn [coll]
-      (f #(pos? (bit-and % cs)) coll))))
+      (coll-f #(pos? (bit-and % cs)) coll))))
 
 (defn- board->meta
   ([b]
