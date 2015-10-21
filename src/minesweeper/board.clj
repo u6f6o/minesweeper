@@ -32,13 +32,13 @@
   (apply bit-or (conj (map state->bit xs) 0)))
 
 (defn- every-state
-  [xs f]
+  [xs coll-f]
   (let [cs (combine-states xs)]
     (fn [coll]
       (f #(= cs (bit-and % cs)) coll))))
 
 (defn- any-state
-  [xs f]
+  [xs coll-f]
   (let [cs (combine-states xs)]
     (fn [coll]
       (f #(pos? (bit-and % cs)) coll))))
