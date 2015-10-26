@@ -1,19 +1,6 @@
 (ns minesweeper.board
   (:use [clojure.pprint]))
 
-;; (defn- every-state*
-;;   [xs]
-;;   (let [cs (combine-states xs)]
-;;     (fn [e]
-;;       (= cs (bit-and e cs)))))
-;; 
-;; (defn cells-w-mines 
-;; 	[coll]
-;; 	(let [pred (every-state [:mine :warn])]
-;;   		(filter pred coll)))
-
-
-
 
 (def levels { :beginner     { :w 8  :h 8  :m 10 }
               :intermediate { :w 16 :h 16 :m 40 }
@@ -42,19 +29,20 @@
 
 (defn- combine-states
   [xs]
-  (apply bit-or (conj (map state->bit xs) 0)))
+  (apply bit-or
+         (conj (map state->bit xs) 0)))
 
-(defn- every-state
-  [xs coll-f]
+(defn- every-state*
+  [xs]
+  (let [cs (combine-states xs)]
+    (fn [e]
+      (= cs (bit-and e cs)))))
+
+(defn- any-state*
+  [xs]
   (let [cs (combine-states xs)]
     (fn [coll]
-      (coll-f #(= cs (bit-and % cs)) coll))))
-
-(defn- any-state
-  [xs coll-f]
-  (let [cs (combine-states xs)]
-    (fn [coll]
-      (coll-f #(pos? (bit-and % cs)) coll))))
+      (pos? (bit-and % cs)) coll)))
 
 (defn- board->meta
   ([b]
@@ -83,6 +71,29 @@
 
 
 
+
+(defn cells-w-mines
+  [board]
+  (let [pred (every-state* [:mine])]
+    (filter pred board)))
+
+(defn game-started?
+  [board]
+  (let [pred (every-state* [:explored])]
+    (some pred board)))
+
+(defn game-lost?
+  [board]
+  (let [pred (every-state* [:explored :mine])]
+    (some pred board)))
+
+(defn game-won?
+  [board]
+  (let [pred (any-state* [:explored :mine])]
+    (every? pred board)))
+
+
+
 (defn empty-board
   "Create an empty board with
   the specified width and height"
@@ -93,17 +104,7 @@
           (vec (repeat (dec (* w h)) 0)))))
 
 
-(def cells-w-mines
-  (every-state [:mine] filter))
 
-(def game-started?
-  (every-state [:explored] some))
-
-(def game-lost?
-  (every-state [:explored :mine] some))
-
-(def game-won?
-  (any-state [:explored :mine] every?))
 
 
 (defn neighbour-cells
