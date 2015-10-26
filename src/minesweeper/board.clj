@@ -1,6 +1,19 @@
 (ns minesweeper.board
   (:use [clojure.pprint]))
 
+;; (defn- every-state*
+;;   [xs]
+;;   (let [cs (combine-states xs)]
+;;     (fn [e]
+;;       (= cs (bit-and e cs)))))
+;; 
+;; (defn cells-w-mines 
+;; 	[coll]
+;; 	(let [pred (every-state [:mine :warn])]
+;;   		(filter pred coll)))
+
+
+
 
 (def levels { :beginner     { :w 8  :h 8  :m 10 }
               :intermediate { :w 16 :h 16 :m 40 }
