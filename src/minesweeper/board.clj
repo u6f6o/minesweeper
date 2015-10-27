@@ -65,9 +65,8 @@
 (defn- idx->pos
   [b i]
   (let [row-size (board->meta b :w)]
-    (vector
-     (mod i row-size)
-     (quot i row-size))))
+    (vector (mod i row-size)
+            (quot i row-size))))
 
 
 
@@ -102,8 +101,6 @@
         [w h _]  (get levels level)]
     (into [meta-bit]
           (vec (repeat (dec (* w h)) 0)))))
-
-
 
 
 
