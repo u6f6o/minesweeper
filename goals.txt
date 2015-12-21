@@ -1,0 +1,3 @@
+1.) Board with fixed mines and warnings ( )
+2.) Board hidden, only explored fields reviewed (x)
+3.) Win, lose conditions, basically playable ( )
