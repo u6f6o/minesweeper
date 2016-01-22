@@ -1,5 +1,5 @@
-(ns minesweeper.game
-  (:require [minesweeper.display  :as ui]))
+(ns minesweeper.game)
+
 
 (defn empty-board
   [w h m]

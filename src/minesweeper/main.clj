@@ -2,6 +2,7 @@
   (:require [minesweeper.game :as game]
             [minesweeper.display :as display]))
 
+
 (def game (atom {}))
 (def debug (atom false))
 

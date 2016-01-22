@@ -1,4 +1,5 @@
-(ns minesweeper.display)
+(ns minesweeper.display
+  (:require [clojure.string :as str]))
 
 
 (defn- state-transformer*
