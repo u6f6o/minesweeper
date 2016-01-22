@@ -3,6 +3,7 @@
             [minesweeper.display :as display]))
 
 (def game (atom {}))
+(def debug (atom false))
 
 
 (defn setup-game
@@ -25,13 +26,19 @@
 (defn start-game
   []
   (reset! game (setup-game))
-  nil)
+  (when @debug @game))
 
 
-(defn next-turn
+(defn explore-cell
   [x y]
   (swap! game game/explore-cell [x y])
-  nil)
+  (when @debug @game))
+
+
+(defn toggle-flag
+  [x y]
+  (swap! game game/toggle-flag [x y])
+  (when @debug @game))
 
 
 (defn won?
@@ -47,3 +54,8 @@
 (defn show-board
   []
   (display/display-board @game))
+
+
+(defn toggle-debug
+  []
+  (swap! debug not))
