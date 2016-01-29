@@ -12,10 +12,15 @@
       :mine-cnt  m }))
 
 
+(defn- board-with
+  [board]
+  (:width board))
+
+
 (defn- pos->idx
   [board pos]
   (let [[x y] pos]
-    (+ y (* x (:width board)))))
+    (+ x (* y (board-with board)))))
 
 
 (defn- cell-modifier*
@@ -45,7 +50,7 @@
   [board]
   (let [ms (:mines board)
         es (:explored board)]
-    (not-any? zero? (map + ms es))))
+    (every? #(= % 1) (map + ms es))))
 
 
 (defn lost?
