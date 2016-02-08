@@ -1,17 +1,16 @@
 # minesweeper
-[![Build Status](https://travis-ci.org/u6f6o/minesweeper.svg?branch=master)](https://travis-ci.org/u6f6o/minesweeper)
 
-A simple minesweeper game to get hands on clojure.
+This tag refers to my first blog post about sweeping mines in clojure. The blog post can be found [here](http://comsysto.com/blog-post/sweeping-mines-with-clojure-part-1) 
 
 ## Usage
 
-    $ lein run
+    $ lein repl
 
 ## Icons
 All icons in the game originate from https://github.com/HaikuArchives/Minesweeper. Thx for the great work!
 
 ## License
 
-Copyright © 2015 Ulf Gitschthaler
+Copyright © 2016 Ulf Gitschthaler
 
 Distributed under the MIT License.
