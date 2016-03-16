@@ -138,9 +138,10 @@
 
 (defn- init-game
   [board start-idx]
-  (-> (->> (place-mines board start-idx)
-           (place-warnings))
-      (explore-cell start-idx)))
+  (explore-cell
+    (-> (place-mines board start-idx)
+        (place-warnings))
+    start-idx))
 
 (defn init
   [board start-idx]

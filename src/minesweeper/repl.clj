@@ -18,9 +18,3 @@
 (defn display
   [board]
   (display/display-board board))
-
-;;   (-> (empty-board 9 9 10)
-;;       (init [1 1])
-;;       (flag [0 1])
-;;       (explore [0 2])
-;;       (display))
