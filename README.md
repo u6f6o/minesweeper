@@ -1,10 +1,10 @@
 # minesweeper
 
-This particular tag relates to my second blog post about sweeping mines in clojure. The blog post can be found [here](https://comsysto.com/blog-post/sweeping-mines-with-clojure-part-2).
+A simple minesweeper game to get hands on clojure.
 
 ## Usage
 
-    $ lein repl
+    $ lein run
 
 ## Icons
 All icons in the game originate from https://github.com/HaikuArchives/Minesweeper. Thx for the great work!
