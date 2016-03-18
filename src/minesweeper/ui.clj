@@ -9,16 +9,17 @@
 
 (def ui (frame :title "Minesweeper" :on-close :exit))
 (def board (atom {}))
+(def buttons (atom []))
 
-(defn select-field
+(defn select-button
   [idx]
-  (select ui [(keyword (str "#field_" idx))]))
+  (@buttons idx))
 
 (defn- update-fields
   [cell-states]
   (doseq [[idx state] (map-indexed vector cell-states)
-          :let [field (select-field idx)]]
-      (config! field :icon (icons/cell-icons state))))
+          :let [button (select-button idx)]]
+      (config! button :icon (icons/cell-icons state))))
 
 (defn- change-smiley
   [face]
@@ -87,11 +88,13 @@
 (defn- make-board-panel
   [snapshot]
   (let [bg    (button-group)
-        [n m] (:dimension snapshot)]
+        [n m] (:dimension snapshot)
+        items (into [] (for [idx (range (* n m))]
+                       (make-button idx bg)))]
+    (reset! buttons items)
     (mig-panel
      :constraints [(str "gap 0, wrap" n) "[]" "[]" ]
-     :items       (for [idx (range (* n m))]
-                    (vector (make-button idx bg) "w 24px!, h 24px!")))))
+     :items       (map #(vector % "w 24px!, h 24px!") items))))
 
 (defn make-info-panel
   []
@@ -108,8 +111,12 @@
 (defn make-menubar
   []
   (vector (menu :text "File"
-                :items [(menu-item :text "New game"
-                                   :listen [:action (fn [e] (new-game 8 8 10))])])))
+                :items [(menu-item :text "Beginner"
+                                   :listen [:action (fn [e] (new-game 8 8 10))])
+                        (menu-item :text "Intermediate"
+                                   :listen [:action (fn [e] (new-game 16 16 40))])
+                        (menu-item :text "Expert"
+                                   :listen [:action (fn [e] (new-game 30 16 99))])])))
 
 (defn make-ui
   [snapshot]
