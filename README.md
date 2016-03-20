@@ -5,12 +5,16 @@ This particular tag relates to my second blog post about sweeping mines in cloju
 ## Usage
 
     $ lein repl
+or
+
+    $ lein run
+
 
 ## Icons
 All icons in the game originate from https://github.com/HaikuArchives/Minesweeper. Thx for the great work!
 
 ## License
 
-Copyright © 2015 Ulf Gitschthaler
+Copyright © 2016 Ulf Gitschthaler
 
 Distributed under the MIT License.
